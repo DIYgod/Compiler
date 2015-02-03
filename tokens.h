@@ -72,3 +72,7 @@ extern YYSTYPE yylval;          //与单词关联的语义值
 # define SWITCH 183
 # define WHILE 184
 # define SIZEOF 185
+# define STRING_V 186
+# define INT_V 187
+# define CHAR_V 188
+# define DOUBLE_V 189
