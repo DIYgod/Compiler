@@ -24,17 +24,17 @@ void adjust(void)           //计算单词位置, 并通过EM_tokPos传给错误
 %%
 [" ""\t"]                   {adjust(); continue;}
 "\n"                        {adjust(); EM_newline(); continue;}
-\"(A-Za-z0-9)*\"            {adjust(); yylval.sval = yytext; return STRING_V;}
+(\")([A-Za-z0-9])*(\")            {adjust(); yylval.sval = yytext; return STRING_V;}
 string                      {adjust(); return STRING;}
-\'[A-Za-z0-9]\'             {adjust(); yylval.cval = yytext[0]; return CHAR_V;}
-char                        {adjust(); return CHAR_V;}
+'[A-Za-z0-9]'             {adjust(); yylval.cval = yytext[1]; return CHAR_V;}
+char                        {adjust(); return CHAR;}
 short                       {adjust(); EM_error(EM_tokPos, "暂不支持short类型");}
 -?[0-9]+                    {adjust(); yylval.ival=atoi(yytext); return INT_V;}
 int                         {adjust(); return INT;}
 unsigned                    {adjust(); EM_error(EM_tokPos, "暂不支持unsigned类型");}
 long                        {adjust(); EM_error(EM_tokPos, "暂不支持long类型");}
 float                       {adjust(); EM_error(EM_tokPos, "暂不支持float类型");}
--?[0-9]+(.[0-9]+)?          {adjust(); yylval.dval = atof(yytext); return DOUBLE_V;}
+-?[0-9]+(\.[0-9]+)?          {adjust(); yylval.dval = atof(yytext); return DOUBLE_V;}
 do                          {adjust(); return DO;}
 double                      {adjust(); return DOUBLE;}
 struct                      {adjust(); return STRUCT;}
@@ -61,8 +61,8 @@ return                      {adjust(); return RETURN;}
 switch                      {adjust(); return SWITCH;}
 while                       {adjust(); return WHILE;}
 sizeof                      {adjust(); return SIZEOF;}
-(A-Za-z)+\[(0-9)+\]         {adjust(); return ARRAY;}
-([A-Za-z_](A-Za-z0-9_)*)    {adjust(); return ID;}
+[A-Za-z]+\[[0-9]+\]         {adjust(); return ARRAY;}
+[A-Za-z_]([A-Za-z0-9_])*    {adjust(); yylval.sval = yytext; return ID;}
 ","                         {adjust(); return COMMA;}
 ":"                         {adjust(); return COLON;}
 ";"                         {adjust(); return SEMICOLON;}
