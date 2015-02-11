@@ -4,6 +4,7 @@ int main(void)
     string s = "anotherhome";
     int i = 9;
     double d = 9.7;
+    short sh = 1;
     if(i > 7)
     {
         s[0] = 'b';

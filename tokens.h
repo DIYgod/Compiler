@@ -3,10 +3,9 @@
  */
 
 typedef union  {
-	int pos;
 	int ival;
-    char cval;
-    double dval;
+    	char cval;
+    	double dval;
 	string sval;
 	} YYSTYPE;
 extern YYSTYPE yylval;          //与单词关联的语义值
