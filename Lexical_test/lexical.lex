@@ -1,8 +1,9 @@
 %{
 #include <string.h>
 #include "util.h"
+#include "tokens.h"
 #include "errormsg.h"
-#include "yy.tab.h"
+//#include "yy.tab.h"
 
 int charPos=1;              //记录每个单词的位置
 
@@ -26,17 +27,17 @@ void adjust(void)           //计算单词位置, 并通过EM_tokPos传给错误
 "//"([^"\n"])*              {adjust();}
 [" ""\t"]                   {adjust();}
 "\n"                        {adjust(); EM_newline();}
-(\")([A-Za-z0-9])*(\")      {adjust(); yylval.sval = yytext; return STRINGV;}
+(\")([A-Za-z0-9])*(\")      {adjust(); yylval.sval = yytext; return STRING_V;}
 string                      {adjust(); return STRING;}
-'[A-Za-z0-9]'               {adjust(); yylval.cval = yytext[1]; return CHARV;}
+'[A-Za-z0-9]'               {adjust(); yylval.cval = yytext[1]; return CHAR_V;}
 char                        {adjust(); return CHAR;}
 short                       {adjust(); EM_error(EM_tokPos, "Sorry, this word are not supported.");}
--?[0-9]+                    {adjust(); yylval.ival=atoi(yytext); return INTV;}
+-?[0-9]+                    {adjust(); yylval.ival=atoi(yytext); return INT_V;}
 int                         {adjust(); return INT;}
 unsigned                    {adjust(); EM_error(EM_tokPos, "Sorry, this word are not supported.");}
 long                        {adjust(); EM_error(EM_tokPos, "");}
 float                       {adjust(); EM_error(EM_tokPos, "Sorry, this word are not supported.");}
--?[0-9]+(\.[0-9]+)?         {adjust(); yylval.dval = atof(yytext); return DOUBLEV;}
+-?[0-9]+(\.[0-9]+)?         {adjust(); yylval.dval = atof(yytext); return DOUBLE_V;}
 do                          {adjust(); return DO;}
 double                      {adjust(); return DOUBLE;}
 struct                      {adjust(); EM_error(EM_tokPos, "Sorry, this word are not supported.");}
@@ -63,11 +64,12 @@ return                      {adjust(); return RETURN;}
 switch                      {adjust(); return SWITCH;}
 while                       {adjust(); return WHILE;}
 sizeof                      {adjust(); EM_error(EM_tokPos, "Sorry, this word are not supported.");}
+[A-Za-z]+\[[0-9]+\]         {adjust(); return ARRAY;}
 [A-Za-z_]([A-Za-z0-9_])*    {adjust(); yylval.sval = yytext; return ID;}
 "+="                        {adjust(); return PLUSASSIGN;}
 "-="                        {adjust(); return MINUSASSIGN;}
 "*="                        {adjust(); return TIMESASSIGN;}
-"/="                        {adjust(); return DIVIDEASSIGN;}
+"/="                        {adjust(); return DIVIDE;}
 "!="                        {adjust(); return NEQ;}
 "<="                        {adjust(); return LE;}
 ">="                        {adjust(); return GE;}

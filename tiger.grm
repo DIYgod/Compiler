@@ -3,32 +3,47 @@
 #include "util.h"
 #include "errormsg.h"
 
-int yylex(void); /* function prototype */
+int yylex(void);
 
-void yyerror(char *s)
+void yyerror(char *s)       //错误处理
 {
- EM_error(EM_tokPos, "%s", s);
+    EM_error(EM_tokPos, "%s", s);
 }
+
 %}
 
 
-%union {
-	int pos;
-	int ival;
-	string sval;
-	}
+%union
+{
+    int ival;
+    char cval;
+    double dval;
+    string sval;
+}
 
-%token <sval> ID STRING
-%token <ival> INT
+/*优先级从低到高*/
 
-%token 
-  COMMA COLON SEMICOLON LPAREN RPAREN LBRACK RBRACK 
-  LBRACE RBRACE DOT 
-  PLUS MINUS TIMES DIVIDE EQ NEQ LT LE GT GE
-  AND OR ASSIGN
-  ARRAY IF THEN ELSE WHILE FOR TO DO LET IN END OF 
-  BREAK NIL
-  FUNCTION VAR TYPE 
+%token <sval> ID STRINGV
+%token <ival> INTV
+%token <cval> CHARV
+%token <dval> DOUBLEV
+
+%token
+        STRING CHAR INT DOUBLE
+        DO BREAK CONTINUE FOR WHILE
+        CASE DEFAULT IF SWITCH GOTO ELSE
+        VOID RETURN
+
+%left COMMA
+%right PLUSASSIGN MINUSASSIGN TIMESASSIGN DIVIDEASSIGN EQ
+%left OR
+%left AND
+%left ASSIGN NEQ
+%left LE GE LT ET
+%left PLUS MINUS
+%left TIMES DIVIDE MOD
+%right INC DEC NOT
+%left LPAREN RPAREN LBRACK RBRACK
 
 %start program
 
