@@ -57,7 +57,7 @@ continue                    {adjust(); return CONTINUE;}
 default                     {adjust(); return DEFAULT;}
 else                        {adjust(); return ELSE;}
 for                         {adjust(); return FOR;}
-goto                        {adjust(); return GOTO;}
+goto                        {adjust(); EM_error(EM_tokPos, "Sorry, this word are not supported.");}
 if                          {adjust(); return IF;}
 return                      {adjust(); return RETURN;}
 switch                      {adjust(); return SWITCH;}
@@ -71,7 +71,7 @@ sizeof                      {adjust(); EM_error(EM_tokPos, "Sorry, this word are
 "!="                        {adjust(); return NEQ;}
 "<="                        {adjust(); return LE;}
 ">="                        {adjust(); return GE;}
-"=="                        {adjust(); return ASSIGN;}
+"=="                        {adjust(); return EQ;}
 "++"                        {adjust(); return INC;}
 "--"                        {adjust(); return DEC;}
 "&&"                        {adjust(); return AND;}
@@ -90,7 +90,7 @@ sizeof                      {adjust(); EM_error(EM_tokPos, "Sorry, this word are
 "-"                         {adjust(); return MINUS;}
 "*"                         {adjust(); return TIMES;}
 "/"                         {adjust(); return DIVIDE;}
-"="                         {adjust(); return EQ;}
+"="                         {adjust(); return ASSIGN;}
 "<"                         {adjust(); return LT;}
 ">"                         {adjust(); return GT;}
 "!"                         {adjust(); return NOT;}

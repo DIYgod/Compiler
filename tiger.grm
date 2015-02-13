@@ -33,12 +33,13 @@ void yyerror(char *s)       //错误处理
         DO BREAK CONTINUE FOR WHILE
         CASE DEFAULT IF SWITCH GOTO ELSE
         VOID RETURN
+        COLON SEMICOLON LBRACE RBRACE
 
 %left COMMA
-%right PLUSASSIGN MINUSASSIGN TIMESASSIGN DIVIDEASSIGN EQ
+%right PLUSASSIGN MINUSASSIGN TIMESASSIGN DIVIDEASSIGN ASSIGN
 %left OR
 %left AND
-%left ASSIGN NEQ
+%left EQ NEQ
 %left LE GE LT ET
 %left PLUS MINUS
 %left TIMES DIVIDE MOD
@@ -49,10 +50,143 @@ void yyerror(char *s)       //错误处理
 
 %%
 
-program:	exp
+program
+    : function
+    | program function
+    ;
 
-exp:   ID
+function
+    : function_returntype function_name LPAREN function_param RPAREN LBRACE statements RBRACE
+    ;
 
+function_returntype
+    : VOID
+    | id_type
+    ;
 
+id_type
+    : STRING
+    | CHAR
+    | INT
+    | DOUBLE
+    ;
 
-	
+function_name
+    : ID
+    ;
+
+function_paramstate
+    : function_paramstate COMMA id_type ID
+    | id_type ID
+    ;
+
+function_paramuse
+    : function_paramuse COMMA ID
+    | ID
+    ;
+
+statements
+    : statement
+    | statements statement
+    ;
+
+statement
+    : sequence
+    | select
+    | loop
+    | BREAK
+    ;
+
+/*顺序结构*/
+
+sequence
+    : declaration SEMICOLON
+    | assignment SEMICOLON
+    | arrassignment SEMICOLON
+    | function LPAREN function_paramuse RPAREN SEMICOLON
+    ;
+
+declaration
+    : id_type ID
+    | id_type assignment
+    | id_type ID LBRACK INT RBRACK
+    | id_type arrassignment
+    ;
+
+arrassignment
+    : ID LBRACK INT RBRACK ASSIGN LBRACE arrvalue RBRACE
+    ;
+
+arrvalue
+    : value
+    | arrvalue COMMA value
+    ;
+
+value        /*应该放在后面*/
+    : INTV
+    | CHARV
+    | DOUBLEV
+    ;
+
+assignment
+    : ID ASSIGN exp
+    | ID PLUSASSIGN exp
+    | ID MINUSASSIGN exp
+    | ID TIMESASSIGN exp
+    | ID DIVIDEASSIGN exp
+    | ID INC
+    | ID DEC
+    ;
+
+exp
+    : ID
+    | value
+    | LPAREN exp RPAREN
+    | exp PLUS exp
+    | exp MINUS exp
+    | exp TIMES exp
+    | exp DIVIDE exp
+    | exp MOD exp
+    ;
+
+/*选择结构*/
+
+select
+    : IF LPAREN boolexp RPAREN LBRACE statements RBRACE
+    | IF LPAREN boolexp RPAREN statement
+    | SWITCH LPAREN ID RPAREN LBRACE casestatement RBRACE
+    ;
+
+casestatement
+    : CASE value COLON statements
+    | casestatement CASE value COLON statements
+    ;
+
+boolexp
+    : LPAREN boolexp RPAREN
+    | boolexp AND boolexp
+    | boolexp OR boolexp
+    | NOT boolexp
+    | ID
+    | INTV
+    | ID compare INTV
+    | ID compare DOUBLEV
+    | INTV compare ID
+    | INTV compare DOUBLEV
+    | DOUBLEV compare INTV
+    | DOUBLEV compare ID
+    ;
+
+compare
+    : NEQ
+    | LE
+    | GE
+    | EQ
+    | LT
+    | GT
+    ;
+
+/*循环结构*/
+
+loop
+    : 
