@@ -2,7 +2,7 @@
 #include <string.h>
 #include "util.h"
 #include "errormsg.h"
-#include "yy.tab.h"
+#include "y.tab.h"
 
 int charPos=1;              //记录每个单词的位置
 
@@ -22,13 +22,18 @@ void adjust(void)           //计算单词位置, 并通过EM_tokPos传给错误
 %}
 
 %%
-"/*"([*]*(([^*/])+([/])*)*)*"*/"    {adjust();}         //匹配注释
+"/*"([*]*(([^*/])+([/])*)*)*"*/"    {adjust();
+                                    int i;
+                                     for(i=0;yytext[i]!='\0';i++)
+                                        if(yytext[i] == '\n') EM_newline();
+                                    }         //匹配注释
 "//"([^"\n"])*              {adjust();}
-[" ""\t"]                   {adjust();}
+[" "]                       {adjust();}
+["\t"]                      {yyleng = 8; adjust();}
 "\n"                        {adjust(); EM_newline();}
 (\")([A-Za-z0-9])*(\")      {adjust(); yylval.sval = yytext; return STRINGV;}
 string                      {adjust(); return STRING;}
-'[A-Za-z0-9]'               {adjust(); yylval.cval = yytext[1]; return CHARV;}
+'[A-Za-z0-9]'               {adjust(); yylval.cval = yytext; return CHARV;}
 char                        {adjust(); return CHAR;}
 short                       {adjust(); EM_error(EM_tokPos, "Sorry, this word are not supported.");}
 -?[0-9]+                    {adjust(); yylval.ival=atoi(yytext); return INTV;}

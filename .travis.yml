@@ -1,0 +1,9 @@
+language: c
+notifications:
+    email:
+        - diy.d.god@gmail.com
+before_script:
+    - sudo apt-get install lex
+    - sudo apt-get install yacc
+script:
+    - make

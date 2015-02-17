@@ -16,7 +16,7 @@ void yyerror(char *s)       //错误处理
 %union
 {
     int ival;
-    char cval;
+    string cval;
     double dval;
     string sval;
 }
@@ -40,7 +40,7 @@ void yyerror(char *s)       //错误处理
 %left OR
 %left AND
 %left EQ NEQ
-%left LE GE LT ET
+%left LE GE LT GT
 %left PLUS MINUS
 %left TIMES DIVIDE MOD
 %right INC DEC NOT
@@ -56,12 +56,10 @@ program
     ;
 
 function
-    : function_returntype function_name LPAREN function_param RPAREN LBRACE statements RBRACE
-    ;
-
-function_returntype
-    : VOID
-    | id_type
+    : VOID ID LPAREN VOID RPAREN LBRACE statements RBRACE
+    | id_type ID LPAREN VOID RPAREN LBRACE statements RBRACE
+    | VOID ID LPAREN function_paramstate RPAREN LBRACE statements RBRACE
+    | id_type ID LPAREN function_paramstate RPAREN LBRACE statements RBRACE
     ;
 
 id_type
@@ -71,13 +69,9 @@ id_type
     | DOUBLE
     ;
 
-function_name
-    : ID
-    ;
-
 function_paramstate
-    : function_paramstate COMMA id_type ID
-    | id_type ID
+    : function_paramstate COMMA declaration
+    | declaration
     ;
 
 function_paramuse
@@ -91,19 +85,22 @@ statements
     ;
 
 statement
-    : sequence
+    : sequence SEMICOLON
     | select
     | loop
-    | BREAK
+    | BREAK SEMICOLON
+    | CONTINUE SEMICOLON
+    | RETURN ID SEMICOLON
+    | RETURN value SEMICOLON
     ;
 
 /*顺序结构*/
 
 sequence
-    : declaration SEMICOLON
-    | assignment SEMICOLON
-    | arrassignment SEMICOLON
-    | function LPAREN function_paramuse RPAREN SEMICOLON
+    : declaration
+    | assignment
+    | arrassignment
+    | ID LPAREN function_paramuse RPAREN
     ;
 
 declaration
@@ -114,7 +111,7 @@ declaration
     ;
 
 arrassignment
-    : ID LBRACK INT RBRACK ASSIGN LBRACE arrvalue RBRACE
+    : ID LBRACK INTV RBRACK ASSIGN LBRACE arrvalue RBRACE
     ;
 
 arrvalue
@@ -122,14 +119,16 @@ arrvalue
     | arrvalue COMMA value
     ;
 
-value        /*应该放在后面*/
+value
     : INTV
     | CHARV
     | DOUBLEV
+    | STRINGV
     ;
 
 assignment
     : ID ASSIGN exp
+    | ID LBRACK INTV RBRACK ASSIGN exp
     | ID PLUSASSIGN exp
     | ID MINUSASSIGN exp
     | ID TIMESASSIGN exp
@@ -152,14 +151,22 @@ exp
 /*选择结构*/
 
 select
+    : ifelsestate
+    | SWITCH LPAREN ID RPAREN LBRACE casestatement RBRACE
+    ;
+
+ifelsestate
     : IF LPAREN boolexp RPAREN LBRACE statements RBRACE
     | IF LPAREN boolexp RPAREN statement
-    | SWITCH LPAREN ID RPAREN LBRACE casestatement RBRACE
+    | ifelsestate ELSE LBRACE statements RBRACE
+    | ifelsestate ELSE statement
     ;
 
 casestatement
     : CASE value COLON statements
+    | DEFAULT COLON statements
     | casestatement CASE value COLON statements
+    | casestatement DEFAULT COLON statements
     ;
 
 boolexp
@@ -167,14 +174,10 @@ boolexp
     | boolexp AND boolexp
     | boolexp OR boolexp
     | NOT boolexp
+    | ID compare value
+    | value compare ID
     | ID
-    | INTV
-    | ID compare INTV
-    | ID compare DOUBLEV
-    | INTV compare ID
-    | INTV compare DOUBLEV
-    | DOUBLEV compare INTV
-    | DOUBLEV compare ID
+    | value
     ;
 
 compare
@@ -189,4 +192,7 @@ compare
 /*循环结构*/
 
 loop
-    : 
+    : DO LBRACE statements RBRACE WHILE LPAREN boolexp RPAREN
+    | WHILE LPAREN boolexp RPAREN LBRACE statements RBRACE
+    | FOR LPAREN sequence SEMICOLON boolexp SEMICOLON sequence RPAREN LBRACE statements RBRACE
+    ;
