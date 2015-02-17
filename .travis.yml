@@ -3,7 +3,7 @@ notifications:
     email:
         - diy.d.god@gmail.com
 before_script:
-    - sudo apt-get install lex
-    - sudo apt-get install yacc
+    - sudo apt-get install flex
+    - sudo apt-get install bison
 script:
     - make
