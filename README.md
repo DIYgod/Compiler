@@ -12,7 +12,7 @@ Compile the simple-C program into machine code.
 
 已完成：词法分析 语法分析
 
-其他资料：[各阶段源码](http://www.anotherhome.net/file/compiler/) [各阶段说明](http://www.anotherhome.net/1751)
+相关内容：[各阶段源码](http://www.anotherhome.net/file/compiler/) [各阶段说明](http://www.anotherhome.net/1751)
 
 ## Requirements
 
