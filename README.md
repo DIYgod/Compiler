@@ -63,3 +63,7 @@ Compiler Lex Yacc LLVM
 ## License
 
 GPLv3
+
+
+[![Bitdeli Badge](https://d2weczhvl823v0.cloudfront.net/DIYgod/compiler/trend.png)](https://bitdeli.com/free "Bitdeli Badge")
+
